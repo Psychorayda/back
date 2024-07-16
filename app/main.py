@@ -1,10 +1,9 @@
-from contextvars import ContextVar
 import signal
 import sys
 import time
 import uuid
 import aioredis
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_ratelimiter import RedisDependencyMarker
 
@@ -12,7 +11,10 @@ from models import BaseModel, RequestLogModel
 from database import engine, get_session
 from apis.base import api_list
 from settings import req_id_ctx
+
 from logger import system_logger
+from apis.websocket import manager
+
 
 app = FastAPI()
 

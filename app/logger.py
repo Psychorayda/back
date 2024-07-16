@@ -17,7 +17,7 @@ format_str = "%(levelname)s - %(asctime)s - ID:%(req_id)s - FILE:%(filename)s - 
 
 stream = logging.StreamHandler() # write to console
 stream.addFilter(RequestInfoFilter())
-stream.setLevel(logging.WARNING)
+stream.setLevel(logging.INFO)
 stream.setFormatter(logging.Formatter(format_str, datefmt="%Y-%m-%d %H:%M:%S"))
 
 

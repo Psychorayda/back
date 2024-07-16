@@ -14,6 +14,7 @@ from schemas import *
 
 # from .user import router as user
 from .auth import router as auth
+from .websocket import router as ws
 from .test import router as test
 
 
@@ -120,4 +121,5 @@ api_list = [
     {"router": test, "prefix": "/test", "tags": ["Test"], "dependencies": []},
     {"router": user, "prefix": "/user", "tags": ["User"], "dependencies": []},
     {"router": auth, "prefix": "/auth", "tags": ["Auth"], "dependencies": [Depends(TokenChecker())]},
+    {"router": ws, "prefix": "/ws", "tags": ["Websocket"], "dependencies": []},
 ]
