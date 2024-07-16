@@ -1,7 +1,7 @@
 from contextvars import ContextVar
 import os
 
-from templates import *
+# from templates import *
 
 
 #######################################################################
@@ -55,7 +55,7 @@ log level
 
 # user_context = ContextVar("user")
 # role_context = ContextVar("role")
-request_id_context = ContextVar("request_id")
+req_id_ctx = ContextVar("req_id")
 # host_context = ContextVar("host")
 # method_context = ContextVar("method")
 # url_context = ContextVar("url")
@@ -86,7 +86,7 @@ ALLOW_HEADERS = ["*"]
 
 
 #######################################################################
-WEBSOCKET_TEST_HTML = websocket_test_html
+# WEBSOCKET_TEST_HTML = websocket_test_html
 '''
 template for test websocket func
 '''

@@ -1,3 +1,4 @@
+import logging
 from typing import Sequence, Union, Callable, Optional, Awaitable
 from aioredis import Redis
 from fastapi import Depends, HTTPException, Request, status
@@ -8,6 +9,9 @@ from fastapi_ratelimiter.types import RateLimitStatus
 from fastapi_ratelimiter import RateLimited, RedisDependencyMarker
 from fastapi_ratelimiter.strategies import BucketingRateLimitStrategy
 from sqlalchemy.orm import Session
+
+from schemas import TokenDataSchema
+from settings import ALGORITHM, SECRET_KEY
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
@@ -29,26 +33,30 @@ class DB_Session:
 
 class TokenChecker:
     def __init__(self):
-        self.token_user_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token user id is None",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
         self.token_jwt_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not decode JWT",
             headers={"WWW-Authenticate": "Bearer"},
         )   
         
-    async def __call__(self, token: str = Depends(oauth2_scheme)) -> TokenData:
+    async def __call__(self, token: str = Depends(oauth2_scheme)) -> TokenDataSchema:
         try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            user_id: int = payload.get("user_id")
-            user_online = user_manager.getUserByID(id=user_id)
-            if user_id is None:
-                raise self.token_user_exception
-            token_data = TokenData(user_id=user_id, user_online=user_online)
-            return token_data
+            payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+            user_id: int = payload.get("id")
+            return TokenDataSchema(user_id=user_id)
         except JWTError:
-            logger.warning("JWT decode error")
+            logging.warning("JWT decode error")
             raise self.token_jwt_exception
+        
+
+class RequestRateLimiter(RateLimited):
+    def __init__(self, rate: str, prefix: str = DEFAULT_PREFIX, request_identifier_factory: Optional[RequestIdentifierFactoryType] = None, group: Optional[str] = None):
+        super().__init__(BucketingRateLimitStrategy(rate=rate, prefix=prefix, request_identifier_factory=request_identifier_factory, group=group))
+
+    async def __call__(self,  
+                       request: Request,
+                       redis: Redis = Depends(RedisDependencyMarker),
+                    #    token_data: TokenDataSchema = Depends(TokenChecker())
+                       ) -> RateLimitStatus:
+        ratelimit_status = await super().__call__(request=request, redis=redis)
+        return ratelimit_status

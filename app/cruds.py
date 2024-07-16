@@ -48,14 +48,16 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def retrieve(self, db_session: Session, item_id: int) -> Optional[ModelType]:
         try:
-            return db_session.query(self.model).filter(self.model.id == item_id).first()
+            result = db_session.query(self.model).filter(self.model.id == item_id).first()
+            return result
         except Exception as error_info:
             db_session.rollback()
             return None
 
     def retrieve_mutil(self, db_session: Session, skip: int = 0, limit: int = 20) -> List[ModelType]:
         try:
-            return db_session.query(self.model).offset(skip).limit(limit).all()
+            result_list = db_session.query(self.model).offset(skip).limit(limit).all()
+            return result_list
         except Exception as error_info:
             db_session.rollback()
             return []
@@ -65,4 +67,11 @@ CRUDType = TypeVar("CRUDType", bound=BaseCRUD)
 
 
 class UserCRUD(BaseCRUD[UserModel, UserCreateSchema, UserUpdateSchema]):
-    pass
+    def retrieve_by_name(self, db_session: Session, name: str) -> Optional[UserModel]:
+        try:
+            user = db_session.query(self.model).filter(self.model.name == name).first()
+            return user
+        except Exception as error_info:
+            db_session.rollback()
+            return None
+        

@@ -2,20 +2,25 @@ from typing import Type, TypeVar, List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from dependencies import DB_Session
+from dependencies import *
 
 from cruds import CRUDType
 from schemas import CreateSchemaType, UpdateSchemaType, RetrieveSchemaType
 from models import ModelType
 
-from .user import router as user
+from cruds import *
+from models import *
+from schemas import *
+
+# from .user import router as user
+from .auth import router as auth
+from .test import router as test
 
 
 def base_router(crud: Type[CRUDType], 
-                      model: Type[ModelType], 
-                      response_model: Type[RetrieveSchemaType], 
-                      create_schema: Type[CreateSchemaType], 
-                      update_schema: Type[UpdateSchemaType]) -> APIRouter:
+                model: Type[ModelType], 
+                create_schema: Type[CreateSchemaType], 
+                update_schema: Type[UpdateSchemaType]) -> APIRouter:
     router = APIRouter()
     crud = crud(model)
 
@@ -86,7 +91,6 @@ def base_router(crud: Type[CRUDType],
             raise HTTPException(status_code=400, detail=f"{model.__tablename__} not found")
 
     @router.get("/mutil",
-                response_model=list[response_model],
                 summary=f"get mutil {model.__tablename__}s")
     async def get_mutil(
         skip: int = 0,
@@ -97,7 +101,6 @@ def base_router(crud: Type[CRUDType],
         return results
 
     @router.get("/{id}",
-                response_model=response_model,
                 summary=f"get {model.__tablename__} info")
     async def get(
         id: int,
@@ -111,7 +114,10 @@ def base_router(crud: Type[CRUDType],
 
     return router
 
+user = base_router(crud=UserCRUD,  model=UserModel, create_schema=UserCreateSchema, update_schema=UserUpdateSchema)
 
 api_list = [
+    {"router": test, "prefix": "/test", "tags": ["Test"], "dependencies": []},
     {"router": user, "prefix": "/user", "tags": ["User"], "dependencies": []},
+    {"router": auth, "prefix": "/auth", "tags": ["Auth"], "dependencies": [Depends(TokenChecker())]},
 ]

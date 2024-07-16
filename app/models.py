@@ -16,8 +16,10 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
     id:  Mapped[int] = mapped_column(Integer, primary_key=True, comment='主键ID')
     create_datetime: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), comment='创建时间')
     update_datetime: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), comment='更新时间')
-    delete_datetime: Mapped[datetime | None] = mapped_column(DateTime, nullable=True, comment='删除时间')
-    is_delete: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否软删除")
+    # delete_datetime: Mapped[datetime | None] = mapped_column(DateTime, nullable=True, comment='删除时间')
+    # is_delete: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否软删除")
+
+ModelType = TypeVar("ModelType", bound=BaseModel)
 
 
 class UserModel(BaseModel):
@@ -30,5 +32,30 @@ class UserModel(BaseModel):
     disabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, comment="账号禁用")
 
 
+class SystemLogModel(BaseModel):
 
-ModelType = TypeVar("ModelType", bound=BaseModel)
+    __tablename__ = 'system_log'
+
+    levelname: Mapped[str] = mapped_column(String(16), nullable=False, comment="日志等级")
+    message: Mapped[str] = mapped_column(String(1024), nullable=False, comment="日志信息")
+    filename: Mapped[str] = mapped_column(String(32), nullable=False, comment="文件名")
+    funcName: Mapped[str] = mapped_column(String(64), nullable=False, comment="函数名")
+    lineno: Mapped[int] = mapped_column(Integer, nullable=False, comment="代码行号")
+    req_id: Mapped[str] = mapped_column(String(64), nullable=False, comment="请求ID")
+
+
+class RequestLogModel(BaseModel):
+
+    __tablename__ = 'request_log'
+
+    user: Mapped[str | None] = mapped_column(String(64), nullable=True, comment="用户名")
+    role: Mapped[str | None] = mapped_column(String(64), nullable=True, comment="角色名")
+    host: Mapped[str] = mapped_column(String(64), nullable=False, comment="主机名")
+    method: Mapped[str] = mapped_column(String(8), nullable=False, comment="请求方法")
+    url: Mapped[str] = mapped_column(String(256), nullable=False, comment="请求URL")
+    path_params: Mapped[str | None] = mapped_column(String(1024), nullable=True, comment="路径参数")
+    query_params: Mapped[str | None] = mapped_column(String(1024), nullable=True, comment="查询参数")
+    response_status: Mapped[int] = mapped_column(Integer, nullable=False, comment="响应状态码")
+    content_length: Mapped[int] = mapped_column(Integer, nullable=False, comment="响应内容长度")
+    process_time: Mapped[str] = mapped_column(String(32), nullable=False, comment="处理时间")
+    req_id: Mapped[str] = mapped_column(String(64), nullable=False, comment="请求ID")

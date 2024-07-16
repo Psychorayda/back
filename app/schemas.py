@@ -68,12 +68,46 @@ class UserUpdateSchema(UserCreateSchema):
     disabled: bool
 
 
-# class UserLoginSchema(BaseSchema):
-#     '''
-#     schema for user login
-#     '''
-#     name: str
-#     password: str
+class UserOutSchema(UserSchema):
+    '''
+    schema for output user info
+    '''
+    id: int
+    email: str
+    disabled: bool
+
+
+class UserLoginSchema(UserSchema):
+    '''
+    schema for user login
+    '''
+    password: str
+
+    @validator("password")
+    def length(cls, value):
+        if len(value) < 6:
+            raise ValueError("length of user password must longer than 6")
+        if len(value) > 15:
+            raise ValueError("length of user password must shorter than 16")
+        return value
+    
+    @validator("password")
+    def haveAlpha(cls, value):
+        if not any(char.isalpha() for char in value):
+            raise ValueError("user password must have English letters in lowercase & uppercase")
+        if not any(char.islower() for char in value):
+            raise ValueError("user password must have English letters in lowercase")
+        if not any(char.isupper() for char in value):
+            raise ValueError("user password must have English letters in uppercase")
+        return value
+
+    @validator("password")
+    def haveDigit(cls, value):
+        if not any(char.isdigit() for char in value):
+            raise ValueError("user password must have digit")
+        if value.isalpha():
+            raise ValueError("user password must have digit")
+        return value
 
 
 # class UserLogoutSchema(BaseSchema):
