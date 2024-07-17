@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 from typing import List, Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from fastapi.websockets import WebSocketState
+# from fastapi.websockets import WebSocketState
 
 from logger import system_logger
 
@@ -19,7 +19,7 @@ class Connection:
 
     async def forward_websocket(self, ws1_ready_fut: asyncio.Future, ws2_ready_fut: asyncio.Future):
         try:
-            ws2_url = "ws://localhost:18888/ws/state/"
+            ws2_url = "ws://localhost:18888/ws/"
             async with aiohttp.ClientSession() as session:
                 async with session.ws_connect(ws2_url) as self.ws2:
                     ws2_ready_fut.set_result(self.ws2)
