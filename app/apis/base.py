@@ -118,8 +118,8 @@ def base_router(crud: Type[CRUDType],
 user = base_router(crud=UserCRUD,  model=UserModel, create_schema=UserCreateSchema, update_schema=UserUpdateSchema)
 
 api_list = [
-    {"router": test, "prefix": "/test", "tags": ["Test"], "dependencies": []},
+    {"router": test, "prefix": "/test", "tags": ["Test"], "dependencies": [Depends(TokenChecker())]},
     {"router": user, "prefix": "/user", "tags": ["User"], "dependencies": []},
-    {"router": auth, "prefix": "/auth", "tags": ["Auth"], "dependencies": [Depends(TokenChecker())]},
+    {"router": auth, "prefix": "/auth", "tags": ["Auth"], "dependencies": []},
     {"router": ws, "prefix": "/ws", "tags": ["Websocket"], "dependencies": []},
 ]
