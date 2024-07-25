@@ -1,4 +1,4 @@
-from typing import List, TypeVar, Union
+from typing import Any, List, TypeVar, Union
 from pydantic import BaseModel, validator
 
 
@@ -125,3 +125,13 @@ class TokenSchema(BaseModel):
 class TokenDataSchema(BaseModel):
     user_id: int
     # user_online: UserActiveSchema | None = None
+
+
+class TelesSetSchema(BaseModel):
+    peer_name: str
+    prop_name: str
+    val: Any
+
+class TelesCmdSchema(BaseModel):
+    peer_name: str
+    command: str

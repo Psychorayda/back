@@ -45,7 +45,7 @@ class WebSocketManager:
                 try:    
                     while True:
                         message = await conn.ws1.receive_text()
-                        system_logger.info(f"Message from front: {message}")
+                        # system_logger.info(f"Message from front: {message}")
                         await conn.ws2.send_str(data=message)
                 except Exception as e:
                     system_logger.error(f"Error during send message to remote: {e}")
@@ -63,7 +63,7 @@ class WebSocketManager:
             try:
                 async for msg in conn.ws2:
                     if msg.type == aiohttp.WSMsgType.TEXT:
-                        system_logger.info(f"Message from remote: {msg.data}")
+                        # system_logger.info(f"Message from remote: {msg.data}")
                         await conn.ws1.send_text(data=msg.data)
                     elif msg.type == aiohttp.WSMsgType.CLOSED:
                         system_logger.warning(f"Connection to remote: {conn.id} closed")
