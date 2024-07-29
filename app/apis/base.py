@@ -116,12 +116,22 @@ def base_router(crud: Type[CRUDType],
 
     return router
 
+
 user = base_router(crud=UserCRUD,  model=UserModel, create_schema=UserCreateSchema, update_schema=UserUpdateSchema)
+role = base_router(crud=RoleCRUD,  model=RoleModel, create_schema=RoleCreateSchema, update_schema=RoleUpdateSchema)
+perm = base_router(crud=PermCRUD,  model=PermModel, create_schema=PermCreateSchema, update_schema=PermUpdateSchema)
+user_role = base_router(crud=UserRoleCRUD,  model=UserRoleModel, create_schema=UserRoleCreateSchema, update_schema=UserRoleUpdateSchema)
+role_perm = base_router(crud=RolePermCRUD,  model=RolePermModel, create_schema=RolePermCreateSchema, update_schema=RolePermUpdateSchema)
+
 
 api_list = [
     {"router": test, "prefix": "/test", "tags": ["Test"], "dependencies": [Depends(TokenChecker())]},
-    {"router": user, "prefix": "/user", "tags": ["User"], "dependencies": []},
     {"router": auth, "prefix": "/auth", "tags": ["Auth"], "dependencies": []},
     {"router": teles, "prefix": "/teles", "tags": ["Teles"], "dependencies": []},
+    {"router": user, "prefix": "/user", "tags": ["User"], "dependencies": []},
+    {"router": role, "prefix": "/role", "tags": ["Role"], "dependencies": []},
+    {"router": perm, "prefix": "/perm", "tags": ["Perm"], "dependencies": []},
+    {"router": user_role, "prefix": "/userrole", "tags": ["UserRole"], "dependencies": []},
+    {"router": role_perm, "prefix": "/roleperm", "tags": ["RolePerm"], "dependencies": []},
     {"router": ws, "prefix": "/ws", "tags": ["Websocket"], "dependencies": []},
 ]

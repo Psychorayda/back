@@ -60,3 +60,17 @@ class RequestRateLimiter(RateLimited):
                        ) -> RateLimitStatus:
         ratelimit_status = await super().__call__(request=request, redis=redis)
         return ratelimit_status
+    
+
+class PermissionChecker:
+    def __init__(self, perm_needed: str = None):
+        self.perm_needed = perm_needed
+        self.forbidden_exception = HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to do that!"
+        )
+
+    async def __call__(self):
+        if self.perm_needed is not None:
+            raise self.forbidden_exception
+        return

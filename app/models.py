@@ -31,6 +31,45 @@ class UserModel(BaseModel):
     email: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, comment="邮箱地址")
     disabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, comment="账号禁用")
 
+    roles = relationship("RoleModel", secondary="user_role", overlaps="users")
+
+
+class RoleModel(BaseModel):
+
+    __tablename__ = 'role'
+
+    name: Mapped[str] = mapped_column(String(64), nullable=False, index=True, comment="角色名")
+    desc: Mapped[str | None] = mapped_column(String(256), nullable=True, comment="角色描述")
+    
+    users = relationship("UserModel", secondary="user_role", overlaps="roles")
+    menus = relationship("PermModel", secondary="role_perm", overlaps="roles")
+
+
+class PermModel(BaseModel):
+
+    __tablename__ = 'perm'
+
+    name: Mapped[str] = mapped_column(String(64), nullable=False, index=True, comment="权限名")
+    desc: Mapped[str | None] = mapped_column(String(256), nullable=True, comment="权限描述")
+
+    roles = relationship("RoleModel", secondary="role_perm", overlaps="perms")
+
+
+class UserRoleModel(BaseModel):
+
+    __tablename__ = "user_role"
+
+    user_id = Column(Integer, ForeignKey("user.id"))
+    role_id = Column(Integer, ForeignKey("role.id"))
+
+
+class RolePermModel(BaseModel):
+
+    __tablename__ = "role_perm"
+
+    role_id = Column(Integer, ForeignKey("role.id"))
+    perm_id = Column(Integer, ForeignKey("perm.id"))
+
 
 class SystemLogModel(BaseModel):
 

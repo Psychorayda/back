@@ -74,4 +74,20 @@ class UserCRUD(BaseCRUD[UserModel, UserCreateSchema, UserUpdateSchema]):
         except Exception as error_info:
             db_session.rollback()
             return None
+
+
+class RoleCRUD(BaseCRUD[RoleModel, RoleCreateSchema, RoleUpdateSchema]):
+    pass
+
+
+class PermCRUD(BaseCRUD[PermModel, PermCreateSchema, PermUpdateSchema]):
+    pass
+
+
+class UserRoleCRUD(BaseCRUD[UserRoleModel, UserRoleCreateSchema, UserRoleUpdateSchema]):
+    pass
+
+
+class RolePermCRUD(BaseCRUD[RolePermModel, RolePermCreateSchema, RolePermUpdateSchema]):
+    pass
         

@@ -12,6 +12,83 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseSchema)
 RetrieveSchemaType = TypeVar("RetrieveSchemaType", bound=BaseSchema)
 
 
+######################################################################################################
+
+
+class PermSchema(BaseSchema):
+    '''
+    base of perm schema, only have "name" and its validator
+    '''
+    name: str
+
+    @validator("name", pre=True)
+    def onlyAlpha(cls, value):
+        if not value.isalpha():
+            error_info = cls.__repr_name__ + "name must be alpha only"
+            raise ValueError(error_info)
+        return value
+
+
+class PermCreateSchema(PermSchema):
+    '''
+    schema for create perm
+    '''
+    desc: str | None = None
+
+
+class PermUpdateSchema(PermCreateSchema):
+    '''
+    schema for update perm info
+    '''
+    id: int
+
+
+class PermOutSchema(PermUpdateSchema):
+    '''
+    schema for output perm info
+    '''
+
+
+######################################################################################################
+
+
+class RoleSchema(BaseSchema):
+    '''
+    base of role schema, only have "name" and its validator
+    '''
+    name: str
+
+    @validator("name", pre=True)
+    def onlyAlpha(cls, value):
+        if not value.isalpha():
+            error_info = cls.__repr_name__ + "name must be alpha only"
+            raise ValueError(error_info)
+        return value
+    
+
+class RoleCreateSchema(RoleSchema):
+    '''
+    schema for create role
+    '''
+    desc: str | None = None
+
+
+class RoleUpdateSchema(RoleCreateSchema):
+    '''
+    schema for update role info
+    '''
+    id: int
+
+
+class RoleOutSchema(RoleUpdateSchema):
+    '''
+    schema for output role info
+    '''
+
+
+######################################################################################################
+
+
 class UserSchema(BaseSchema):
     '''
     base of user schema, only have "name" and its validator
@@ -108,13 +185,69 @@ class UserLoginSchema(UserSchema):
         if value.isalpha():
             raise ValueError("user password must have digit")
         return value
+    
+
+######################################################################################################
 
 
-# class UserLogoutSchema(BaseSchema):
-#     '''
-#     schema for user logout, int "id" only
-#     '''
-#     id: int
+class UserRoleSchema(BaseSchema):
+    '''
+    base of user_role schema
+    '''
+
+
+class UserRoleCreateSchema(UserRoleSchema):
+    '''
+    schema for create user_role
+    '''
+    user_id: int
+    role_id: int
+
+
+class UserRoleUpdateSchema(UserRoleCreateSchema):
+    '''
+    schema for update user_role info
+    '''
+    id: int
+
+
+class UserRoleOutSchema(UserRoleUpdateSchema):
+    '''
+    schema for output user_role info
+    '''
+
+
+######################################################################################################
+
+
+class RolePermSchema(BaseSchema):
+    '''
+    base of role_perm schema
+    '''
+
+
+class RolePermCreateSchema(RolePermSchema):
+    '''
+    schema for create role_perm
+    '''
+    role_id: int
+    perm_id: int
+
+
+class RolePermUpdateSchema(RolePermCreateSchema):
+    '''
+    schema for update role_perm info
+    '''
+    id: int
+
+
+class RolePermOutSchema(RolePermUpdateSchema):
+    '''
+    schema for output role_perm info
+    '''
+
+
+######################################################################################################
 
 
 class TokenSchema(BaseModel):
@@ -125,6 +258,9 @@ class TokenSchema(BaseModel):
 class TokenDataSchema(BaseModel):
     user_id: int
     # user_online: UserActiveSchema | None = None
+
+
+######################################################################################################
 
 
 class TelesSetSchema(BaseModel):
