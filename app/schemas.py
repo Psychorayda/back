@@ -86,6 +86,13 @@ class RoleOutSchema(RoleUpdateSchema):
     '''
 
 
+class RoleOutWithPermsSchema(RoleUpdateSchema):
+    '''
+    schema for output role info
+    '''
+    perms: List[PermOutSchema]
+
+
 ######################################################################################################
 
 
@@ -152,6 +159,16 @@ class UserOutSchema(UserSchema):
     id: int
     email: str
     disabled: bool
+
+
+class UserOutWithRolesSchema(UserSchema):
+    '''
+    schema for output user info
+    '''
+    id: int
+    email: str
+    disabled: bool
+    roles: List[RoleOutWithPermsSchema]
 
 
 class UserLoginSchema(UserSchema):

@@ -42,7 +42,7 @@ class RoleModel(BaseModel):
     desc: Mapped[str | None] = mapped_column(String(256), nullable=True, comment="角色描述")
     
     users = relationship("UserModel", secondary="user_role", overlaps="roles")
-    menus = relationship("PermModel", secondary="role_perm", overlaps="roles")
+    perms = relationship("PermModel", secondary="role_perm", overlaps="roles")
 
 
 class PermModel(BaseModel):
